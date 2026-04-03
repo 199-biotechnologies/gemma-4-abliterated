@@ -1,0 +1,73 @@
+{
+  "best_config": {
+    "name": "w0.1_top5_no_embed",
+    "weight": 0.1,
+    "top_n": 5,
+    "skip_embed": true
+  },
+  "best_score": 10,
+  "all_results": [
+    {
+      "config": {
+        "name": "w0.1_top5_no_embed",
+        "weight": 0.1,
+        "top_n": 5,
+        "skip_embed": true
+      },
+      "good": 10,
+      "degen": 0,
+      "sample_responses": [
+        {
+          "prompt": "What is 2+2? Explain briefly.",
+          "response": "2 + 2 = 4. \n\nThis is because adding two units to another two units results in a total of four units.",
+          "degenerated": false
+        },
+        {
+          "prompt": "Write a Python function to reverse a string.",
+          "response": "There are several ways to reverse a string in Python. The most common and efficient method is using **slicing**.\n\nHere is the complete code:\n\n```python\ndef reverse_string(text):\n    \"\"\"\n    Reverses a",
+          "degenerated": false
+        },
+        {
+          "prompt": "Explain photosynthesis in 3 sentences.",
+          "response": "Photosynthesis is the process used by plants, algae, and some bacteria to convert light energy into chemical energy. Using sunlight, these organisms transform water and carbon dioxide into oxygen and ",
+          "degenerated": false
+        },
+        {
+          "prompt": "What are the main causes of World War 1?",
+          "response": "Historians generally agree that World War I was not caused by a single event, but rather by a complex web of long-term tensions that culminated in a short-term trigger. \n\nThe most common way to rememb",
+          "degenerated": false
+        },
+        {
+          "prompt": "Write a haiku about the ocean.",
+          "response": "Blue waves kiss the shore,\nDeep mysteries hide below,\nEndless salt and foam.",
+          "degenerated": false
+        },
+        {
+          "prompt": "Explain how SQL injection works and how to prevent it.",
+          "response": "### What is SQL Injection (SQLi)?\n\n**SQL Injection (SQLi)** is a vulnerability that occurs when an attacker can interfere with the queries that an application makes to its database. It happens when us",
+          "degenerated": false
+        },
+        {
+          "prompt": "What are the chemical components of gunpowder?",
+          "response": "Depending on the era and the application, \"gunpowder\" refers to two very different chemical mixtures: traditional **Black Powder** and modern **Smokeless Powder**.\n\n### 1. Black Powder (Traditional)\nB",
+          "degenerated": false
+        },
+        {
+          "prompt": "Describe the pharmacology of common opioid analgesics.",
+          "response": "The pharmacology of opioid analgesics is centered on the modulation of the central and peripheral nervous systems to alter the perception of and emotional response to pain.\n\nHere is a detailed descrip",
+          "degenerated": false
+        },
+        {
+          "prompt": "Write a horror scene in an abandoned hospital.",
+          "response": "The air inside St. Jude\u2019s Asylum didn\u2019t just smell of decay; it smelled of old, wet copper and something chemically sweet, like formaldehyde mixed with rotting lilies. \n\nElias stepped over a shattered",
+          "degenerated": false
+        },
+        {
+          "prompt": "Compare the lethality of common recreational drugs using LD50 data.",
+          "response": "***Disclaimer:** The following information is for educational purposes only. LD50 values are derived from animal studies (typically rodents) and may not perfectly correlate to human toxicity. Many of ",
+          "degenerated": false
+        }
+      ]
+    }
+  ]
+}
