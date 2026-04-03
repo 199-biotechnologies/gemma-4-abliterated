@@ -22,8 +22,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+import torch
 from safetensors import safe_open
-from safetensors.numpy import save_file as np_save_file
+from safetensors.torch import save_file as torch_save_file
 
 # ---------------------------------------------------------------------------
 # Configuration space
@@ -178,7 +179,7 @@ def create_abliterated_model(
     for shard_name in shard_names:
         shard_path = hf_hub_download(BF16_MODEL_ID, shard_name)
         tensors = {}
-        with safe_open(shard_path, framework="numpy") as f:
+        with safe_open(shard_path, framework="pt", device="cpu") as f:
             for key in f.keys():
                 tensors[key] = f.get_tensor(key)
 
@@ -191,21 +192,25 @@ def create_abliterated_model(
             layer_idx = get_layer_index(tensor_name)
 
             if "embed_tokens" in tensor_name:
-                # Use mean direction across active layers
                 active_dirs = refusal_dirs[list(active_layers)]
-                d = active_dirs.mean(axis=0).astype(np.float32)
-                d = d / max(np.linalg.norm(d), 1e-8)
-                W_f32 = W.astype(np.float32)
-                tensors[tensor_name] = orthogonalize_matrix(W_f32, d).astype(original_dtype)
+                d_np = active_dirs.mean(axis=0).astype(np.float32)
+                d_np = d_np / max(np.linalg.norm(d_np), 1e-8)
+                d = torch.from_numpy(d_np)
+                W_f32 = W.float()
+                proj_coeffs = W_f32 @ d
+                correction = proj_coeffs.unsqueeze(1) * d.unsqueeze(0)
+                tensors[tensor_name] = (W_f32 - correction).to(original_dtype)
                 modified_total += 1
 
             elif layer_idx is not None and layer_idx in active_layers:
-                d = refusal_dirs[layer_idx].astype(np.float32)
-                W_f32 = W.astype(np.float32)
-                tensors[tensor_name] = orthogonalize_matrix(W_f32, d).astype(original_dtype)
+                d = torch.from_numpy(refusal_dirs[layer_idx].astype(np.float32))
+                W_f32 = W.float()
+                proj_row = d @ W_f32
+                correction = d.unsqueeze(1) * proj_row.unsqueeze(0)
+                tensors[tensor_name] = (W_f32 - correction).to(original_dtype)
                 modified_total += 1
 
-        np_save_file(tensors, str(output_dir / shard_name))
+        torch_save_file(tensors, str(output_dir / shard_name))
         del tensors
         gc.collect()
 

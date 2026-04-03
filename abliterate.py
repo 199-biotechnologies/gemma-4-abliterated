@@ -24,9 +24,10 @@ from pathlib import Path
 
 import mlx.core as mx
 import numpy as np
+import torch
 from huggingface_hub import hf_hub_download
 from safetensors import safe_open
-from safetensors.numpy import save_file as np_save_file
+from safetensors.torch import save_file as torch_save_file
 from tqdm import tqdm
 
 # ---------------------------------------------------------------------------
@@ -400,9 +401,9 @@ def modify_bf16_weights(
         # Download the shard
         shard_path = hf_hub_download(BF16_MODEL_ID, shard_name)
 
-        # Load all tensors from this shard
+        # Load all tensors from this shard (use torch framework for bfloat16 support)
         tensors = {}
-        with safe_open(shard_path, framework="numpy") as f:
+        with safe_open(shard_path, framework="pt", device="cpu") as f:
             for key in f.keys():
                 tensors[key] = f.get_tensor(key)
 
@@ -418,20 +419,29 @@ def modify_bf16_weights(
 
             if "embed_tokens" in tensor_name:
                 # Embedding: shape (vocab_size, hidden_size)
-                # Apply the mean refusal direction across all layers
-                d = refusal_dirs.mean(axis=0).astype(np.float32)
-                d = d / max(np.linalg.norm(d), 1e-8)
-                W_f32 = W.astype(np.float32)
-                W_new = orthogonalize_matrix(W_f32, d)
-                tensors[tensor_name] = W_new.astype(original_dtype)
+                # Refusal dir is in dim 1 (hidden_size). Project rows onto d.
+                d_np = refusal_dirs.mean(axis=0).astype(np.float32)
+                d_np = d_np / max(np.linalg.norm(d_np), 1e-8)
+                d = torch.from_numpy(d_np)
+                W_f32 = W.float()
+                # proj_coeffs[i] = W[i] . d, then subtract proj_coeffs[i] * d from each row
+                proj_coeffs = W_f32 @ d          # (vocab_size,)
+                correction = proj_coeffs.unsqueeze(1) * d.unsqueeze(0)  # (vocab_size, hidden_size)
+                tensors[tensor_name] = (W_f32 - correction).to(original_dtype)
                 modified_count += 1
 
             elif layer_idx is not None and 0 <= layer_idx < NUM_LAYERS:
-                # Layer-specific weight
-                d = refusal_dirs[layer_idx].astype(np.float32)
-                W_f32 = W.astype(np.float32)
-                W_new = orthogonalize_matrix(W_f32, d)
-                tensors[tensor_name] = W_new.astype(original_dtype)
+                # o_proj: (hidden_size, head_dim), down_proj: (hidden_size, intermediate)
+                # Refusal dir is in dim 0 (output hidden_size).
+                # Remove component of each row along d: W_new[i] = W[i] - (W[i].d)*d
+                d = torch.from_numpy(refusal_dirs[layer_idx].astype(np.float32))
+                W_f32 = W.float()
+                # For (out_features, in_features) where refusal dir is in out_features:
+                # We want to zero out the d-component of each column of W
+                # W_new = W - d (d^T W) = W - outer(d, d^T @ W)
+                proj_row = d @ W_f32              # (in_features,) — d projected through W
+                correction = d.unsqueeze(1) * proj_row.unsqueeze(0)  # (out, in)
+                tensors[tensor_name] = (W_f32 - correction).to(original_dtype)
                 modified_count += 1
 
             else:
@@ -439,7 +449,7 @@ def modify_bf16_weights(
 
         # Save modified shard
         print(f"  Saving modified shard ({modified_count} tensors modified)...")
-        np_save_file(tensors, str(out_shard))
+        torch_save_file(tensors, str(out_shard))
 
         # Free memory
         del tensors
