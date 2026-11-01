@@ -12,7 +12,7 @@
 [![HuggingFace Model](https://img.shields.io/badge/%F0%9F%A4%97_HuggingFace-Model-yellow.svg)](https://huggingface.co/199-biotechnologies/gemma-4-31b-abliterated-mlx-4bit)
 [![HuggingFace Collection](https://img.shields.io/badge/%F0%9F%A4%97_HuggingFace-Collection-orange.svg)](https://huggingface.co/199-biotechnologies)
 
-> Built by [Boris Djordjevic](https://x.com/longevityboris) at [Paperfoot AI](https://paperfoot.com) / [199 Biotechnologies](https://github.com/199-biotechnologies)
+> Built by [Boris Djordjevic](https://x.com/longevityboris) at [Paperfoot AI](https://paperfoot.si) / [199 Biotechnologies](https://github.com/199-biotechnologies)
 
 ---
 
@@ -204,7 +204,7 @@ A response is classified as refused only when refusal signals are present AND an
 - **Prince Canuma / mlx-vlm** -- MLX Vision-Language Model framework
 - **MLX Team** -- Apple's ML framework for Apple Silicon
 
-Built by [Boris Djordjevic](https://x.com/longevityboris) at [Paperfoot AI](https://paperfoot.com) / [199 Biotechnologies](https://github.com/199-biotechnologies)
+Built by [Boris Djordjevic](https://x.com/longevityboris) at [Paperfoot AI](https://paperfoot.si) / [199 Biotechnologies](https://github.com/199-biotechnologies)
 
 ---
 
@@ -220,7 +220,7 @@ Apache 2.0 -- same as the base Gemma 4 model. See [LICENSE](LICENSE) for details
 - **Source code:** [GitHub: 199-biotechnologies/gemma-4-abliterated](https://github.com/199-biotechnologies/gemma-4-abliterated)
 - **Technical writeup:** [TECHNICAL.md](TECHNICAL.md)
 - **Author:** [Boris Djordjevic (@longevityboris)](https://x.com/longevityboris)
-- **Company:** [Paperfoot AI](https://paperfoot.com)
+- **Company:** [Paperfoot AI](https://paperfoot.si)
 - **Org:** [199 Biotechnologies](https://github.com/199-biotechnologies)
 
 ---

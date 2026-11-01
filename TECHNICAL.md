@@ -1,6 +1,6 @@
 # Technical Writeup: Abliteration of Gemma 4 31B
 
-**Author:** [Boris Djordjevic](https://x.com/longevityboris) | [Paperfoot AI](https://paperfoot.com) | [199 Biotechnologies](https://github.com/199-biotechnologies)
+**Author:** [Boris Djordjevic](https://x.com/longevityboris) | [Paperfoot AI](https://paperfoot.si) | [199 Biotechnologies](https://github.com/199-biotechnologies)
 
 ## Table of Contents
 
